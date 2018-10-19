@@ -29,6 +29,9 @@ See [Wiki/Contributing & Collaboration](https://github.com/USEPA/HELP/wiki/Contr
 ## Local Installation for Programmers
 See [Wiki/Local Installation for Programmers](https://github.com/USEPA/HELP/wiki/Local-Installation-for-Programmers).
 
+## User Manual
+See [Wiki/User Manual](https://github.com/USEPA/HELP/wiki/User-Manual).
+
 ## License
 HELP is developed and maintained by National Risk Management Research Laboratory Office of Research and Development
 U.S. Environmental Protection Agency, Cincinnati, OH 45268.
