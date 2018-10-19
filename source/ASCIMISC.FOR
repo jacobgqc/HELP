@@ -1,788 +1,802 @@
-C *****************************************************************
-      SUBROUTINE ACELL (NROW, NBSTART, NS, TXT, NL, NH, NWRITE)
-      IMPLICIT INTEGER*2 (I - N)
-      PARAMETER (N0 = 0, N1 = 1, N2 = 2, N8 = 8, N32 = 32, N64 = 64)
-      CHARACTER TXT*80, XLM*1 (80), BLNK*1
-      LOGICAL FIRST
-      FIRST = .TRUE.
-      IBLNK = N32
-      BLNK = CHAR (N32)
-      NL = N0
-      NH = N0
-      NA = NROW
-      DO 1000 ICOL = N1, NS
-         NB = NBSTART - N1 + ICOL
-         NF = N8 + N32
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         NF = N2 + N8 + N64
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         XLM (ICOL) = CHAR (NL)
- 1000 CONTINUE
-      IF (NS .LT. 80) THEN
-         DO 1010 ICOL = NS + 1, 80
-            XLM (ICOL) = BLNK
- 1010    CONTINUE
-      END IF
-      ICOL = N1
- 1020 CONTINUE
-      NF = N8 + 128
-      NB = NBSTART + ICOL - N1
-      CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-      IF (NWRITE .GT. N0) THEN
-         IF (NL .GE. 33 .and. NL .LE. 122) THEN
-            NF = N2 + N8 + N64
-            IF (FIRST) THEN
-               DO 1030 I = N1, NS
-                  NB = NBSTART + I - N1
-                  CALL UTLTY (NF, NA, NB, IBLNK, NH, NC, TXT)
-                  XLM (I) = BLNK
- 1030          CONTINUE
-            END IF
-            NB = NBSTART + ICOL - N1
-            CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-            XLM (ICOL) = CHAR (NL)
-            ICOL = ICOL + N1
-            IF (ICOL .GT. NS) ICOL = NS
-         ELSE IF (NL .EQ. N8 .and. NH .EQ. 14) THEN
-            ICOL = ICOL - N1
-            IF (ICOL .LT. N1) THEN
-               ICOL = N1
+!*==ACELL.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      SUBROUTINE ACELL(Nrow,Nbstart,Ns,Txt,Nl,Nh,Nwrite)
+      IMPLICIT NONE
+!*--ACELL5
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 i , iblnk , icol , N0 , N1 , N2 , N32 , N64 , N8 , na , &
+              & nb , Nbstart , nc , nf , Nh , Nl , nltmp , Nrow , Ns ,  &
+              & Nwrite
+!*** End of declarations inserted by SPAG
+      PARAMETER (N0=0,N1=1,N2=2,N8=8,N32=32,N64=64)
+      CHARACTER Txt*80 , xlm*1(80) , blnk*1
+      LOGICAL first
+      first = .TRUE.
+      iblnk = N32
+      blnk = CHAR(N32)
+      Nl = N0
+      Nh = N0
+      na = Nrow
+      DO icol = N1 , Ns
+         nb = Nbstart - N1 + icol
+         nf = N8 + N32
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+         nf = N2 + N8 + N64
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+         xlm(icol) = CHAR(Nl)
+      ENDDO
+      IF ( Ns.LT.80 ) THEN
+         DO icol = Ns + 1 , 80
+            xlm(icol) = blnk
+         ENDDO
+      ENDIF
+      icol = N1
+ 100  nf = N8 + 128
+      nb = Nbstart + icol - N1
+      CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+      IF ( Nwrite.GT.N0 ) THEN
+         IF ( Nl.GE.33 .AND. Nl.LE.122 ) THEN
+            nf = N2 + N8 + N64
+            IF ( first ) THEN
+               DO i = N1 , Ns
+                  nb = Nbstart + i - N1
+                  CALL UTLTY(nf,na,nb,iblnk,Nh,nc,Txt)
+                  xlm(i) = blnk
+               ENDDO
+            ENDIF
+            nb = Nbstart + icol - N1
+            CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+            xlm(icol) = CHAR(Nl)
+            icol = icol + N1
+            IF ( icol.GT.Ns ) icol = Ns
+         ELSEIF ( Nl.EQ.N8 .AND. Nh.EQ.14 ) THEN
+            icol = icol - N1
+            IF ( icol.LT.N1 ) THEN
+               icol = N1
             ELSE
-               DO 1040 I = ICOL, NS
-                  NF = N8 + N32
-                  NB = NBSTART + I
-                  CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-                  NF = N2 + N8 + N64
-                  NB = NB - N1
-                  CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-                  XLM (I) = CHAR (NL)
- 1040          CONTINUE
-               XLM (NS) = BLNK
-               NB = NBSTART + NS - N1
-               CALL UTLTY (NF, NA, NB, IBLNK, NH, NC, TXT)
-            END IF
-         ELSE IF (NL .EQ. N0 .and. NH .EQ. 77) THEN
-            ICOL = ICOL + N1
-            IF (ICOL .GT. NS) ICOL = N1
-         ELSE IF (NL .EQ. N0 .and. NH .EQ. 75) THEN
-            ICOL = ICOL - N1
-            IF (ICOL .LT. N1) ICOL = NS
-         ELSE IF (NL .EQ. N32) THEN
-            ICOL = ICOL + N1
-            IF (ICOL .GT. NS) THEN
-               ICOL = NS
+               DO i = icol , Ns
+                  nf = N8 + N32
+                  nb = Nbstart + i
+                  CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+                  nf = N2 + N8 + N64
+                  nb = nb - N1
+                  CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+                  xlm(i) = CHAR(Nl)
+               ENDDO
+               xlm(Ns) = blnk
+               nb = Nbstart + Ns - N1
+               CALL UTLTY(nf,na,nb,iblnk,Nh,nc,Txt)
+            ENDIF
+         ELSEIF ( Nl.EQ.N0 .AND. Nh.EQ.77 ) THEN
+            icol = icol + N1
+            IF ( icol.GT.Ns ) icol = N1
+         ELSEIF ( Nl.EQ.N0 .AND. Nh.EQ.75 ) THEN
+            icol = icol - N1
+            IF ( icol.LT.N1 ) icol = Ns
+         ELSEIF ( Nl.EQ.N32 ) THEN
+            icol = icol + N1
+            IF ( icol.GT.Ns ) THEN
+               icol = Ns
             ELSE
-               DO 1050 I = NS, ICOL, - N1
-                  NF = N8 + N32
-                  NB = NBSTART + I - N2
-                  CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-                  NF = N2 + N8 + N64
-                  NB = NB + N1
-                  CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-                  XLM (I) = CHAR (NL)
- 1050          CONTINUE
-               XLM (ICOL - N1) = BLNK
-               NB = ICOL + NBSTART - N2
-               CALL UTLTY (NF, NA, NB, IBLNK, NH, NC, TXT)
-            END IF
-         END IF
-      END IF
-      FIRST = .FALSE.
-      IF (NL .EQ. 13 .or. NL .EQ. 42 .or. (NL .EQ. 0 .and. (NH
-     1      .EQ. 79 .or. NH .EQ. 72 .or.
-     2      NH .EQ. 73 .or. NH .EQ. 80 .or. NH .EQ. 81 .or.
-     3      NH .EQ. 82 .or. NH .EQ. 83
-     4      .or. NH .EQ. 71 .or. NH .EQ. 1)) .or. NL .EQ. 27) THEN
-C
-C        ... Change cell to normal video
-C
-         NF = 4 + 8 + 64
-         DO 1060 ICOL = 1, NS
-            NB = NBSTART - 1 + ICOL
-            NLTMP = ICHAR (XLM (ICOL))
-            CALL UTLTY (NF, NA, NB, NLTMP, NH, NC, TXT)
- 1060    CONTINUE
-         TXT = XLM (1)//XLM (2)//XLM (3)//XLM (4)//XLM
-     1      (5)//XLM (6)//XLM (7)//
-     2      XLM (8)//XLM (9)//XLM (10)//XLM (11)//XLM (12)//XLM (13)//
-     3      XLM (14)//XLM (15)//XLM (16)//XLM (17)//XLM (18)//XLM (19)//
-     4      XLM (20)//XLM (21)//XLM (22)//XLM (23)//XLM (24)//XLM (25)//
-     5      XLM (26)//XLM (27)//XLM (28)//XLM (29)//XLM (30)//XLM (31)//
-     6      XLM (32)//XLM (33)//XLM (34)//XLM (35)//XLM (36)//XLM (37)//
-     7      XLM (38)//XLM (39)//XLM (40)//XLM (41)//XLM (42)//XLM (43)//
-     8      XLM (44)//XLM (45)//XLM (46)//XLM (47)//XLM (48)//XLM (49)//
-     9      XLM (50)//XLM (51)//XLM (52)//XLM (53)//XLM (54)//XLM (55)//
-     A      XLM (56)//XLM (57)//XLM (58)//XLM (59)//XLM (60)//XLM (61)//
-     B      XLM (62)//XLM (63)//XLM (64)//XLM (65)//XLM (66)//XLM (67)//
-     C      XLM (68)//XLM (69)//XLM (70)//XLM (71)//XLM (72)//XLM (73)//
-     D      XLM (74)//XLM (75)//XLM (76)//XLM (77)//XLM (78)//XLM (79)//
-     E      XLM (80)
+               DO i = Ns , icol , -N1
+                  nf = N8 + N32
+                  nb = Nbstart + i - N2
+                  CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+                  nf = N2 + N8 + N64
+                  nb = nb + N1
+                  CALL UTLTY(nf,na,nb,Nl,Nh,nc,Txt)
+                  xlm(i) = CHAR(Nl)
+               ENDDO
+               xlm(icol-N1) = blnk
+               nb = icol + Nbstart - N2
+               CALL UTLTY(nf,na,nb,iblnk,Nh,nc,Txt)
+            ENDIF
+         ENDIF
+      ENDIF
+      first = .FALSE.
+      IF ( Nl.EQ.13 .OR. Nl.EQ.42 .OR.                                  &
+         & (Nl.EQ.0 .AND. (Nh.EQ.79 .OR. Nh.EQ.72 .OR. Nh.EQ.73 .OR.    &
+         & Nh.EQ.80 .OR. Nh.EQ.81 .OR. Nh.EQ.82 .OR. Nh.EQ.83 .OR.      &
+         & Nh.EQ.71 .OR. Nh.EQ.1)) .OR. Nl.EQ.27 ) THEN
+!
+!        ... Change cell to normal video
+!
+         nf = 4 + 8 + 64
+         DO icol = 1 , Ns
+            nb = Nbstart - 1 + icol
+            nltmp = ICHAR(xlm(icol))
+            CALL UTLTY(nf,na,nb,nltmp,Nh,nc,Txt)
+         ENDDO
+         Txt = xlm(1)//xlm(2)//xlm(3)//xlm(4)//xlm(5)//xlm(6)//xlm(7)   &
+             & //xlm(8)//xlm(9)//xlm(10)//xlm(11)//xlm(12)//xlm(13)     &
+             & //xlm(14)//xlm(15)//xlm(16)//xlm(17)//xlm(18)//xlm(19)   &
+             & //xlm(20)//xlm(21)//xlm(22)//xlm(23)//xlm(24)//xlm(25)   &
+             & //xlm(26)//xlm(27)//xlm(28)//xlm(29)//xlm(30)//xlm(31)   &
+             & //xlm(32)//xlm(33)//xlm(34)//xlm(35)//xlm(36)//xlm(37)   &
+             & //xlm(38)//xlm(39)//xlm(40)//xlm(41)//xlm(42)//xlm(43)   &
+             & //xlm(44)//xlm(45)//xlm(46)//xlm(47)//xlm(48)//xlm(49)   &
+             & //xlm(50)//xlm(51)//xlm(52)//xlm(53)//xlm(54)//xlm(55)   &
+             & //xlm(56)//xlm(57)//xlm(58)//xlm(59)//xlm(60)//xlm(61)   &
+             & //xlm(62)//xlm(63)//xlm(64)//xlm(65)//xlm(66)//xlm(67)   &
+             & //xlm(68)//xlm(69)//xlm(70)//xlm(71)//xlm(72)//xlm(73)   &
+             & //xlm(74)//xlm(75)//xlm(76)//xlm(77)//xlm(78)//xlm(79)   &
+             & //xlm(80)
          RETURN
-      END IF
-      GO TO 1020
+      ENDIF
+      GOTO 100
       END
-C *****************************************************************
-      SUBROUTINE CELL (NA, NBSTART, NS, NL, NH, VARI, NO, TXT)
-      IMPLICIT INTEGER*2 (I - N)
-      PARAMETER (N0 = 0, N1 = 1, N2 = 2, N8 = 8, N64 = 64)
-      CHARACTER TXT*80
-      CHARACTER*1 XLM (80)
-      ICOL1 = NS
-      DO 1000 ICOL = N1, NS
-         NB = NBSTART - N1 + ICOL
-         NF = N8 + 32
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         NF = N2 + N64
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         XLM (ICOL) = CHAR (NL)
- 1000 CONTINUE
-      DO 1010 ICOL = NS, N1, - N1
-         IF (ICHAR (XLM (ICOL)) .LT. 46 .OR. ICHAR (XLM
-     1      (ICOL)) .GT. 57) GO TO 1020
- 1010 CONTINUE
-      IF (ICOL .LE. N1 .OR. ICOL .GT. NS) ICOL = N1
- 1020 CONTINUE
-      ICOL = ICOL + N1
-      IF (ICOL .GT. NS) ICOL = NS
- 1030 CONTINUE
-      NF = N8 + 128
-      NB = NBSTART - N1 + ICOL
-      IF (NB .GT. NBSTART - N1 + NS) THEN
-         NB = NBSTART - N1 + NS
-         ICOL = NS
-      END IF
-      CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-      IF ((NL .GE. 48 .AND. NL .LE. 57) .OR. NL .EQ. 46 .OR. NL .EQ. 32
-     1      .OR. NL .EQ. 43 .OR. NL .EQ. 45 .OR. NL .EQ.
-     2       69 .OR. NL .EQ. 101) THEN
-         ITEMP = NL
-         IF (ICOL .LT. NS) ICOL1 = ICOL
-         IF (ICOL .EQ. NS) THEN
-            IF (ICOL1 .LE. NS) GO TO 1040
-            DO 1050 J = N2, NS
-               XLM (J - N1) = XLM (J)
- 1050       CONTINUE
-            NF = N2 + N8 + N64
-            DO 1060 ICOL = N1, NS - N1
-               NL = ICHAR (XLM (ICOL))
-               NB = NBSTART - N1 + ICOL
-               CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
- 1060       CONTINUE
-            ICOL = NS
-         END IF
- 1040    CONTINUE
-         NL = ITEMP
-         XLM (ICOL) = CHAR (NL)
-         NF = N2 + N8 + N64
-         NB = NBSTART - N1 + ICOL
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         IF (ICOL .LT. NS) ICOL = ICOL + N1
-         ICOL1 = ICOL1 + N1
-         GO TO 1030
-      ELSE IF (NL .EQ. N8 .AND. NH .EQ. 14) THEN
-         NL = ICHAR (' ')
-         NF = N2 + N8 + N64
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         XLM (ICOL) = ' '
-         ICOL = ICOL - N1
-         IF (ICOL .LT. N1) ICOL = N1
-         GO TO 1030
-      ELSE IF (NL .EQ. N0 .AND. NH .EQ. 77) THEN
-         ICOL = ICOL + N1
-         IF (ICOL .GT. NS) ICOL = N1
-         GO TO 1030
-      ELSE IF (NL .EQ. N0 .AND. NH .EQ. 75) THEN
-         ICOL = ICOL - N1
-         IF (ICOL .LT. N1) ICOL = NS
-         GO TO 1030
-      ELSE IF (NL .EQ. 13 .or. NL .EQ. 9 .or. NL .EQ. 42
-     1      .or. (NL .EQ. 27 .AND. NH
-     2      .EQ. 1) .or. (NL .EQ. N0 .AND. (NH .GE.
-     3       71 .and. NH .LE. 83) .or.
-     4      NH .EQ. 15 .or. NH .EQ. 115 .or. NH .EQ. 116)) THEN
-         TXT = ' '
-C
-C        ... Change cell to normal video
-C
-         NF = 4 + 8 + 64
-         DO 1070 ICOL = 1, NS
-            NB = NBSTART - 1 + ICOL
-            NLTMP = ICHAR (XLM (ICOL))
-            CALL UTLTY (NF, NA, NB, NLTMP, NH, NC, TXT)
- 1070    CONTINUE
-         DO 1080 ICOL = N1, NS
-            TXT (ICOL:ICOL) = XLM (ICOL)
- 1080    CONTINUE
-         VARI = VAR1 (TXT)
+!*==CELL.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      SUBROUTINE CELL(Na,Nbstart,Ns,Nl,Nh,Vari,No,Txt)
+      IMPLICIT NONE
+!*--CELL132
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 icol , icol1 , itemp , j , N0 , N1 , N2 , N64 , N8 ,    &
+              & Na , nb , Nbstart , nc , nf , Nh , Nl , nltmp , No , Ns
+      REAL VAR1 , Vari
+!*** End of declarations inserted by SPAG
+      PARAMETER (N0=0,N1=1,N2=2,N8=8,N64=64)
+      CHARACTER Txt*80
+      CHARACTER*1 xlm(80)
+      icol1 = Ns
+      DO icol = N1 , Ns
+         nb = Nbstart - N1 + icol
+         nf = N8 + 32
+         CALL UTLTY(nf,Na,nb,Nl,Nh,nc,Txt)
+         nf = N2 + N64
+         CALL UTLTY(nf,Na,nb,Nl,Nh,nc,Txt)
+         xlm(icol) = CHAR(Nl)
+      ENDDO
+      DO icol = Ns , N1 , -N1
+         IF ( ICHAR(xlm(icol)).LT.46 .OR. ICHAR(xlm(icol)).GT.57 )      &
+            & GOTO 100
+      ENDDO
+      IF ( icol.LE.N1 .OR. icol.GT.Ns ) icol = N1
+ 100  icol = icol + N1
+      IF ( icol.GT.Ns ) icol = Ns
+ 200  nf = N8 + 128
+      nb = Nbstart - N1 + icol
+      IF ( nb.GT.Nbstart-N1+Ns ) THEN
+         nb = Nbstart - N1 + Ns
+         icol = Ns
+      ENDIF
+      CALL UTLTY(nf,Na,nb,Nl,Nh,nc,Txt)
+      IF ( (Nl.GE.48 .AND. Nl.LE.57) .OR. Nl.EQ.46 .OR. Nl.EQ.32 .OR.   &
+         & Nl.EQ.43 .OR. Nl.EQ.45 .OR. Nl.EQ.69 .OR. Nl.EQ.101 ) THEN
+         itemp = Nl
+         IF ( icol.LT.Ns ) icol1 = icol
+         IF ( icol.EQ.Ns ) THEN
+            IF ( icol1.GT.Ns ) THEN
+               DO j = N2 , Ns
+                  xlm(j-N1) = xlm(j)
+               ENDDO
+               nf = N2 + N8 + N64
+               DO icol = N1 , Ns - N1
+                  Nl = ICHAR(xlm(icol))
+                  nb = Nbstart - N1 + icol
+                  CALL UTLTY(nf,Na,nb,Nl,Nh,nc,Txt)
+               ENDDO
+               icol = Ns
+            ENDIF
+         ENDIF
+         Nl = itemp
+         xlm(icol) = CHAR(Nl)
+         nf = N2 + N8 + N64
+         nb = Nbstart - N1 + icol
+         CALL UTLTY(nf,Na,nb,Nl,Nh,nc,Txt)
+         IF ( icol.LT.Ns ) icol = icol + N1
+         icol1 = icol1 + N1
+         GOTO 200
+      ELSEIF ( Nl.EQ.N8 .AND. Nh.EQ.14 ) THEN
+         Nl = ICHAR(' ')
+         nf = N2 + N8 + N64
+         CALL UTLTY(nf,Na,nb,Nl,Nh,nc,Txt)
+         xlm(icol) = ' '
+         icol = icol - N1
+         IF ( icol.LT.N1 ) icol = N1
+         GOTO 200
+      ELSEIF ( Nl.EQ.N0 .AND. Nh.EQ.77 ) THEN
+         icol = icol + N1
+         IF ( icol.GT.Ns ) icol = N1
+         GOTO 200
+      ELSEIF ( Nl.EQ.N0 .AND. Nh.EQ.75 ) THEN
+         icol = icol - N1
+         IF ( icol.LT.N1 ) icol = Ns
+         GOTO 200
+      ELSEIF ( Nl.EQ.13 .OR. Nl.EQ.9 .OR. Nl.EQ.42 .OR.                 &
+             & (Nl.EQ.27 .AND. Nh.EQ.1) .OR.                            &
+             & (Nl.EQ.N0 .AND. (Nh.GE.71 .AND. Nh.LE.83) .OR.           &
+             & Nh.EQ.15 .OR. Nh.EQ.115 .OR. Nh.EQ.116) ) THEN
+         Txt = ' '
+!
+!        ... Change cell to normal video
+!
+         nf = 4 + 8 + 64
+         DO icol = 1 , Ns
+            nb = Nbstart - 1 + icol
+            nltmp = ICHAR(xlm(icol))
+            CALL UTLTY(nf,Na,nb,nltmp,Nh,nc,Txt)
+         ENDDO
+         DO icol = N1 , Ns
+            Txt(icol:icol) = xlm(icol)
+         ENDDO
+         Vari = VAR1(Txt)
       ELSE
-         GO TO 1030
-      END IF
-      RETURN
+         GOTO 200
+      ENDIF
       END
-C *****************************************************************
-      FUNCTION VAR1 (VAR)
-      PARAMETER (N0 = 0, N1 = 1, N10 = 10)
-      INTEGER*2 N0, N1, N10, NEXP, K, I, IB, IE, IX, IXS, J, IP
-      CHARACTER VAR*80, MINUS*1, PLUS*1, PERIOD*1,
-     1    BLK*1, NUM (N10)*1, E*1,
-     2   Ee*1
-      DATA NUM, MINUS, PLUS, PERIOD, BLK, E, Ee/'0',
-     1   '1', '2', '3', '4', '5', '6',
-     2   '7', '8', '9', '-', '+', '.', ' ', 'E', 'e'/
-      SIGN = 1.
-      RNUM = 0.
-      NEXP = N0
-      K = N1
-      DO 1000 I = N1, 80
-         IF (VAR (I:I) .NE. BLK) GO TO 1010
-         K = K + N1
- 1000 CONTINUE
-      VAR1 = RNUM
+!*==VAR1.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      FUNCTION VAR1(Var)
+      IMPLICIT NONE
+!*--VAR1232
+!*** Start of declarations inserted by SPAG
+      REAL rnum , sign , VAR1
+!*** End of declarations inserted by SPAG
+      PARAMETER (N0=0,N1=1,N10=10)
+      INTEGER*2 N0 , N1 , N10 , nexp , k , i , ib , ie , ix , ixs , j , &
+              & ip
+      CHARACTER Var*80 , minus*1 , plus*1 , period*1 , blk*1 , num(N10) &
+              & *1 , e*1 , ee*1
+      DATA num , minus , plus , period , blk , e , ee/'0' , '1' , '2' , &
+          &'3' , '4' , '5' , '6' , '7' , '8' , '9' , '-' , '+' , '.' ,  &
+          &' ' , 'E' , 'e'/
+      sign = 1.
+      rnum = 0.
+      nexp = N0
+      k = N1
+      DO i = N1 , 80
+         IF ( Var(i:i).NE.blk ) GOTO 100
+         k = k + N1
+      ENDDO
+      VAR1 = rnum
       RETURN
- 1010 CONTINUE
-      IB = K
-      DO 1020 I = IB, 80
-         IF (VAR (I:I) .EQ. BLK) GO TO 1030
-         K = K + N1
- 1020 CONTINUE
- 1030 CONTINUE
-      IE = K - N1
-      IF (VAR (IB:IB) .NE. MINUS) GO TO 1040
-      IB = IB + N1
-      SIGN = - SIGN
-      GO TO 1050
- 1040 CONTINUE
-      IF (VAR (IB:IB) .EQ. PLUS) IB = IB + N1
- 1050 CONTINUE
-      DO 1060 I = IE, IB, - N1
-         IF (VAR (I:I) .EQ. E .OR. VAR (I:I) .EQ. Ee) GO TO 1070
- 1060 CONTINUE
-      GO TO 1080
- 1070 CONTINUE
-      IXS = N1
-      IX = I
-      I = I + N1
-      IF (VAR (I:I) .NE. MINUS) GO TO 1090
-      IXS = - IXS
-      I = I + N1
- 1090 CONTINUE
-      IF (VAR (I:I) .EQ. PLUS) I = I + N1
-      DO 1100 J = IE, I, - N1
-         DO 1110 K = N1, N10
-            IF (VAR (J:J) .EQ. NUM (K)) GO TO 1100
- 1110    CONTINUE
-         NEXP = NEXP + (K - N1)*N10**(IE - J)
- 1100 CONTINUE
-      NEXP = NEXP*IXS
-      IE = IX - N1
- 1080 CONTINUE
-      DO 1120 I = IB, IE
-         IF (VAR (I:I) .EQ. PERIOD) GO TO 1130
- 1120 CONTINUE
-      IE = I
- 1130 CONTINUE
-      IP = I
-      K = N1
-      DO 1140 I = IB, IE
-         DO 1150 J = N1, N10
-            IF (VAR (I:I) .EQ. NUM (J)) GO TO 1160
- 1150    CONTINUE
-         K = N0
-         GO TO 1140
- 1160    CONTINUE
-         RNUM = RNUM + FLOAT (J - N1)*10.**(IP - I - K)
- 1140 CONTINUE
-      VAR1 = RNUM*SIGN
-      IF (NEXP .NE. N0) VAR1 = SIGN*RNUM*10.**NEXP
-      RETURN
-      END
-C *****************************************************************
-      SUBROUTINE AGAIN (iagain)
-C     *************************************
-C     * This subroutine allows the user   *
-C     * to decide whether or not he wants *
-C     * to enter another year of data.    *
-C     *************************************
-C
-C     COMMON /FILENM/ FNAME
-C     CHARACTER FNAME*40
-      IMPLICIT INTEGER*2 (I - N)
-      iagain = 0
-C
-C     ... Clear screen and write yes-no prompt
-C
-      NF = 8 + 256
-      NA = 9
-      NB = 12
-      CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-      WRITE (6, 6000)
- 6000 FORMAT('               ษอออออออออออออออออออออออออออออออออออออออ',
-     1'อออออออป',/,
-     2'               บ   Do you wish  to enter another              ',
-     3'บ',/,
-     4'               บ   year of data to this data set?  Yes   No   ',
-     5'บ',/,
-     6'               บ                                              ',
-     7'บ',/,
-     8'               บ                                              ',
-     9'บ',/,
-     A'               ศออออออออออออออออออออออออออออออออออออออออออออออ',
-     B'ผ')
-      NA = 12
-      NBSTART = 49
-      CALL YESORNO (IANSWER, NA, NBSTART, NL, NH)
-      IF (IANSWER .EQ. 1) iagain = 1
-      RETURN
-      END
-C *****************************************************************
-      SUBROUTINE APPEND (iagain)
-C     ***************************************
-C     * This subroutine allows the user     *
-C     * to decide whether or not he wants   *
-C     * to append data to existing edit file*
-C     ***************************************
-C
-C     COMMON /FILENM/ FNAME
-C     CHARACTER FNAME*40
-      IMPLICIT INTEGER*2 (I - N)
-      iagain = 0
-C
-C     ... Clear screen and write yes-no prompt
-C
-      NF = 8 + 256
-      NA = 9
-      NB = 12
-      CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-      WRITE (6, 6000)
- 6000 FORMAT('               ษอออออออออออออออออออออออออออออออออออออออ',
-     1'อออออออป',/,
-     2'               บ   Data file already exists in                ',
-     3'บ',/,
-     4'               บ   the edit file.  Do you wish     Yes   No   ',
-     5'บ',/,
-     6'               บ   to append data to it?                      ',
-     7'บ',/,
-     8'               บ                                              ',
-     9'บ',/,
-     A'               ศออออออออออออออออออออออออออออออออออออออออออออออ',
-     B'ผ')
-      NA = 12
-      NBSTART = 49
-      CALL YESORNO (IANSWER, NA, NBSTART, NL, NH)
-      IF (IANSWER .EQ. 1) iagain = 1
-      RETURN
-      END
-C *****************************************************************
-      SUBROUTINE keeper (iagain, IWHICH)
-C     *************************************
-C     * This subroutine allows the user      *
-C     * to decide whether or not to keep     *
-C     * leap year data with last day missing *
-C     *************************************
-C
-      IMPLICIT INTEGER*2 (I - N)
-      iagain = 0
-C
-C     ... Clear screen and write yes-no prompt
-C
-      NF = 8 + 256
-      NA = 9
-      NB = 12
-      CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-      IF (IWHICH .EQ. 1) THEN
-         WRITE (6, 6000)
+ 100  ib = k
+      DO i = ib , 80
+         IF ( Var(i:i).EQ.blk ) GOTO 200
+         k = k + N1
+      ENDDO
+ 200  ie = k - N1
+      IF ( Var(ib:ib).NE.minus ) THEN
+         IF ( Var(ib:ib).EQ.plus ) ib = ib + N1
       ELSE
-         WRITE (6, 6010)
-      END IF
- 6000 FORMAT('               ษอออออออออออออออออออออออออออออออออออออออ',
-     1'อออออออป',/,
-     2'               บ   Data set has one value missing             ',
-     3'บ',/,
-     4'               บ   for leap year.  Do you want                ',
-     5'บ',/,
-     6'               บ   to add this year of data to     Yes   No   ',
-     7'บ',/,
-     8'               บ   the data set?                              ',
-     9'บ',/,
-     A'               บ                                              ',
-     B'บ',/,
-     C'               ศออออออออออออออออออออออออออออออออออออออออออออออ',
-     D'ผ')
- 6010 FORMAT('               ษอออออออออออออออออออออออออออออออออออออออ',
-     1'อออออออป',/,
-     2'               บ   Data set has extra data.  Do you wish      ',
-     3'บ',/,
-     4'               บ   to use the first 365 (or 366)              ',
-     5'บ',/,
-     6'               บ   data values?  Extra data will   Yes   No   ',
-     7'บ',/,
-     8'               บ   be ignored.                                ',
-     9'บ',/,
-     A'               บ                                              ',
-     B'บ',/,
-     C'               ศออออออออออออออออออออออออออออออออออออออออออออออ',
-     D'ผ')
-      NA = 13
-      NBSTART = 49
-      CALL YESORNO (IANSWER, NA, NBSTART, NL, NH)
-      IF (IANSWER .EQ. 1) iagain = 1
-      RETURN
+         ib = ib + N1
+         sign = -sign
+      ENDIF
+      DO i = ie , ib , -N1
+         IF ( Var(i:i).EQ.e .OR. Var(i:i).EQ.ee ) GOTO 300
+      ENDDO
+      GOTO 500
+ 300  ixs = N1
+      ix = i
+      i = i + N1
+      IF ( Var(i:i).EQ.minus ) THEN
+         ixs = -ixs
+         i = i + N1
+      ENDIF
+      IF ( Var(i:i).EQ.plus ) i = i + N1
+      DO j = ie , i , -N1
+         DO k = N1 , N10
+            IF ( Var(j:j).EQ.num(k) ) GOTO 400
+         ENDDO
+         nexp = nexp + (k-N1)*N10**(ie-j)
+ 400  ENDDO
+      nexp = nexp*ixs
+      ie = ix - N1
+ 500  DO i = ib , ie
+         IF ( Var(i:i).EQ.period ) GOTO 600
+      ENDDO
+      ie = i
+ 600  ip = i
+      k = N1
+      DO i = ib , ie
+         DO j = N1 , N10
+            IF ( Var(i:i).EQ.num(j) ) GOTO 650
+         ENDDO
+         k = N0
+         GOTO 700
+ 650     rnum = rnum + FLOAT(j-N1)*10.**(ip-i-k)
+ 700  ENDDO
+      VAR1 = rnum*sign
+      IF ( nexp.NE.N0 ) VAR1 = sign*rnum*10.**nexp
       END
-C
-C
-C
-C
-C
-C
-      SUBROUTINE BOXER2 (LR, LC, LN, LW, NF1, NL, NH, ICAP)
-C
-C     ***************************************************************
-C     *** This subroutine draws a box around the current pointer  ***
-C     *** location.                                               ***
-C     ***                                                         ***
-C     *** LR = Top row of the box                                 ***
-C     *** LC = Left column of the box                             ***
-C     *** LN = Number of lines of text                            ***
-C     *** LW = Width (in spaces) of the box                       ***
-C     *** NF1 = Designation whether to draw a normal box (NF1=4), ***
-C     ***       reverse video box (NF1=2), or erase box (NF1=0)   ***
-C     *** NL = ASCII value of the key accepted from the keyboard  ***
-C     *** NH = Second byte of the ASCII value in NL               ***
-C     *** ICAP = If ICAP < 0, the key capture is disabled         ***
-C     ***************************************************************
-C
-      IMPLICIT INTEGER*2 (I - N)
-      CHARACTER TXT*80, TXT1*80, TXT2*80, TXT3*1
-C
-C     ...Initialize TXT
-C
-      DO 1000 I = 1, 80
-         TXT (I:I) = ' '
- 1000 CONTINUE
-C
-C     ...Initialize box type
-C
-      IF (NF1 .GE. 1) THEN
-         TXT1 (1:1) = CHAR (218)
-         TXT1 (LW:LW) = CHAR (191)
-         TXT2 (1:1) = CHAR (192)
-         TXT2 (LW:LW) = CHAR (217)
-         TXT3 = CHAR (179)
-         DO 1010 I = 2, LW - 1
-            TXT1 (I:I) = CHAR (196)
-            TXT2 (I:I) = CHAR (196)
- 1010    CONTINUE
+!*==AGAIN.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      SUBROUTINE AGAIN(Iagain)
+!     *************************************
+!     * This subroutine allows the user   *
+!     * to decide whether or not he wants *
+!     * to enter another year of data.    *
+!     *************************************
+!
+!     COMMON /FILENM/ FNAME
+!     CHARACTER FNAME*40
+      IMPLICIT NONE
+!*--AGAIN315
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 Iagain , ianswer , na , nb , nbstart , nc , nf , nh , nl
+      REAL txt
+!*** End of declarations inserted by SPAG
+      Iagain = 0
+!
+!     ... Clear screen and write yes-no prompt
+!
+      nf = 8 + 256
+      na = 9
+      nb = 12
+      CALL UTLTY(nf,na,nb,nl,nh,nc,txt)
+      WRITE (6,99001)
+99001 FORMAT (                                                          &
+     &'               ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ'',/,  &
+     &                                       'Doyouwishtoenteranother   &
+     &''',/,                                                          ' &
+    & yearofdatatothisdataset'YesNo                                     &
+     &''',/,                                                          ''&
+     &'',/,                                                          '''&
+     &',/,                                                          ''๏ฟฝ&
+     &๏ฟฝ')
+      na = 12
+      nbstart = 49
+      CALL YESORNO(ianswer,na,nbstart,nl,nh)
+      IF ( ianswer.EQ.1 ) Iagain = 1
+      END
+!*==APPEND.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      SUBROUTINE APPEND(Iagain)
+!     ***************************************
+!     * This subroutine allows the user     *
+!     * to decide whether or not he wants   *
+!     * to append data to existing edit file*
+!     ***************************************
+!
+!     COMMON /FILENM/ FNAME
+!     CHARACTER FNAME*40
+      IMPLICIT NONE
+!*--APPEND355
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 Iagain , ianswer , na , nb , nbstart , nc , nf , nh , nl
+      REAL txt
+!*** End of declarations inserted by SPAG
+      Iagain = 0
+!
+!     ... Clear screen and write yes-no prompt
+!
+      nf = 8 + 256
+      na = 9
+      nb = 12
+      CALL UTLTY(nf,na,nb,nl,nh,nc,txt)
+      WRITE (6,99001)
+99001 FORMAT (                                                          &
+     &'               ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ'',/,  &
+     &                                       'Datafilealreadyexistsin   &
+     &''',/,                                                          ' &
+    & theeditfile.DoyouwishYesNo                                        &
+     &''',/,                                                          ' &
+    & toappenddatatoit'                                                 &
+     &''',/,                                                          ''&
+     &'',/,                                                          ''๏ฟฝ&
+     &๏ฟฝ๏ฟฝ')
+      na = 12
+      nbstart = 49
+      CALL YESORNO(ianswer,na,nbstart,nl,nh)
+      IF ( ianswer.EQ.1 ) Iagain = 1
+      END
+!*==KEEPER.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      SUBROUTINE KEEPER(Iagain,Iwhich)
+!     *************************************
+!     * This subroutine allows the user      *
+!     * to decide whether or not to keep     *
+!     * leap year data with last day missing *
+!     *************************************
+!
+      IMPLICIT NONE
+!*--KEEPER394
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 Iagain , ianswer , Iwhich , na , nb , nbstart , nc ,    &
+              & nf , nh , nl
+      REAL txt
+!*** End of declarations inserted by SPAG
+      Iagain = 0
+!
+!     ... Clear screen and write yes-no prompt
+!
+      nf = 8 + 256
+      na = 9
+      nb = 12
+      CALL UTLTY(nf,na,nb,nl,nh,nc,txt)
+      IF ( Iwhich.EQ.1 ) THEN
+         WRITE (6,99001)
+99001    FORMAT (                                                       &
+     &'               ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ'',/,  &
+     &                                       'Datasethasonevaluemissing &
+     &''',/,                                                          ' &
+    & forleapyear.Doyouwant                                             &
+     &''',/,                                                          ' &
+    & toaddthisyearofdatatoYesNo                                        &
+     &''',/,                                                          ' &
+    & thedataset'                                                       &
+     &''',/,                                                          ''&
+     &'',/,                                                          ''๏ฟฝ&
+     &๏ฟฝ๏ฟฝ')
       ELSE
-         TXT3 = ' '
-         DO 1020 I = 1, LW
-            TXT1 (I:I) = ' '
-            TXT2 (I:I) = ' '
- 1020    CONTINUE
-      END IF
-      NFR = NF1
-      IF (NFR .EQ. 0) NFR = 4
-C
-C     ...Draw top bar
-C
-      NF = NFR + 8 + 64
-      NA = LR
-      DO 1030 I = 1, LW
-         NB = I + LC - 1
-         NL = ICHAR (TXT1 (I:I))
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
- 1030 CONTINUE
-C
-C     ...Draw side bars
-C
-      NL = ICHAR (TXT3)
-      NF = NFR + 8 + 64
-      DO 1040 I = LR, LN + LR
-         NA = I + 1
-         NB = LC
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-         NB = LC + LW - 1
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
- 1040 CONTINUE
-C
-C     ...Draw bottom bar
-C
-      NF = NFR + 8 + 64
-      NA = LR + LN + 1
-      DO 1050 I = 1, LW
-         NB = I + LC - 1
-         NL = ICHAR (TXT2 (I:I))
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
- 1050 CONTINUE
-C
-C     ...Capture a key and return it to the calling subroutine
-C
-      IF (NF1 .GE. 1 .and. ICAP .GE. 0) THEN
-         NF = 128
-         CALL UTLTY (NF, NA, NB, NL, NH, NC, TXT)
-      END IF
-C
-      RETURN
+         WRITE (6,99002)
+99002    FORMAT (                                                       &
+     &'               ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ'',/,  &
+     &                                       'Datasethasextradata       &
+    & .Doyouwish                                                        &
+     &''',/,                                                          ' &
+    & tousethefirst365(or366)                                           &
+     &''',/,                                                          ' &
+    & datavalues'ExtradatawillYesNo                                     &
+     &''',/,                                                          ' &
+    & beignored.                                                        &
+     &''',/,                                                          ''&
+     &'',/,                                                          ''๏ฟฝ&
+     &๏ฟฝ๏ฟฝ')
+      ENDIF
+      na = 13
+      nbstart = 49
+      CALL YESORNO(ianswer,na,nbstart,nl,nh)
+      IF ( ianswer.EQ.1 ) Iagain = 1
       END
-C
-C
-C
-      SUBROUTINE YESORNO (IANSWER, NA, NBSTART, NL, NH)
-C
-      IMPLICIT INTEGER*2 (I - N)
-      CHARACTER*80 TXT
-C
-C     ...Draw reverse video box around the CURRENT selection
-C
-c     ##??##
-c      IANSWER = 1
- 1000 CONTINUE
-      ICAP = 1
-      LN = 1
-      LR = NA - 1
-      NF1 = 2
-      NB = NBSTART + 6
-      LW = 4
-      IF (IANSWER .GT. 0) THEN
-         LN = 1
-         LW = 5
-         NB = NBSTART
-      END IF
-      CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-      NL1 = NL
-      NH1 = NH
-C
-C     ...Check for right or left keys
-C
-      IF (NL .EQ. 0 .and. (NH .EQ. 75 .or. NH .EQ. 77)) THEN
-         NF1 = 0
-         CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-         IF (IANSWER .GT. 0) THEN
-            IANSWER = 0
+!*==BOXER2.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+!
+!
+!
+!
+!
+!
+      SUBROUTINE BOXER2(Lr,Lc,Ln,Lw,Nf1,Nl,Nh,Icap)
+!
+!     ***************************************************************
+!     *** This subroutine draws a box around the current pointer  ***
+!     *** location.                                               ***
+!     ***                                                         ***
+!     *** LR = Top row of the box                                 ***
+!     *** LC = Left column of the box                             ***
+!     *** LN = Number of lines of text                            ***
+!     *** LW = Width (in spaces) of the box                       ***
+!     *** NF1 = Designation whether to draw a normal box (NF1=4), ***
+!     ***       reverse video box (NF1=2), or erase box (NF1=0)   ***
+!     *** NL = ASCII value of the key accepted from the keyboard  ***
+!     *** NH = Second byte of the ASCII value in NL               ***
+!     *** ICAP = If ICAP < 0, the key capture is disabled         ***
+!     ***************************************************************
+!
+      IMPLICIT NONE
+!*--BOXER2468
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 i , Icap , Lc , Ln , Lr , Lw , na , nb , nc , nf , Nf1 ,&
+              & nfr , Nh , Nl
+!*** End of declarations inserted by SPAG
+      CHARACTER txt*80 , txt1*80 , txt2*80 , txt3*1
+!
+!     ...Initialize TXT
+!
+      DO i = 1 , 80
+         txt(i:i) = ' '
+      ENDDO
+!
+!     ...Initialize box type
+!
+      IF ( Nf1.GE.1 ) THEN
+         txt1(1:1) = CHAR(218)
+         txt1(Lw:Lw) = CHAR(191)
+         txt2(1:1) = CHAR(192)
+         txt2(Lw:Lw) = CHAR(217)
+         txt3 = CHAR(179)
+         DO i = 2 , Lw - 1
+            txt1(i:i) = CHAR(196)
+            txt2(i:i) = CHAR(196)
+         ENDDO
+      ELSE
+         txt3 = ' '
+         DO i = 1 , Lw
+            txt1(i:i) = ' '
+            txt2(i:i) = ' '
+         ENDDO
+      ENDIF
+      nfr = Nf1
+      IF ( nfr.EQ.0 ) nfr = 4
+!
+!     ...Draw top bar
+!
+      nf = nfr + 8 + 64
+      na = Lr
+      DO i = 1 , Lw
+         nb = i + Lc - 1
+         Nl = ICHAR(txt1(i:i))
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,txt)
+      ENDDO
+!
+!     ...Draw side bars
+!
+      Nl = ICHAR(txt3)
+      nf = nfr + 8 + 64
+      DO i = Lr , Ln + Lr
+         na = i + 1
+         nb = Lc
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,txt)
+         nb = Lc + Lw - 1
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,txt)
+      ENDDO
+!
+!     ...Draw bottom bar
+!
+      nf = nfr + 8 + 64
+      na = Lr + Ln + 1
+      DO i = 1 , Lw
+         nb = i + Lc - 1
+         Nl = ICHAR(txt2(i:i))
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,txt)
+      ENDDO
+!
+!     ...Capture a key and return it to the calling subroutine
+!
+      IF ( Nf1.GE.1 .AND. Icap.GE.0 ) THEN
+         nf = 128
+         CALL UTLTY(nf,na,nb,Nl,Nh,nc,txt)
+      ENDIF
+!
+      END
+!*==YESORNO.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+!
+!
+!
+      SUBROUTINE YESORNO(Ianswer,Na,Nbstart,Nl,Nh)
+!
+      IMPLICIT NONE
+!*--YESORNO550
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 Ianswer , icap , ln , lr , lw , Na , nb , Nbstart ,     &
+              & nf1 , Nh , nh1 , Nl , nl1
+!*** End of declarations inserted by SPAG
+!
+!     ...Draw reverse video box around the CURRENT selection
+!
+!     ##??##
+!      IANSWER = 1
+ 100  icap = 1
+      ln = 1
+      lr = Na - 1
+      nf1 = 2
+      nb = Nbstart + 6
+      lw = 4
+      IF ( Ianswer.GT.0 ) THEN
+         ln = 1
+         lw = 5
+         nb = Nbstart
+      ENDIF
+      CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+      nl1 = Nl
+      nh1 = Nh
+!
+!     ...Check for right or left keys
+!
+      IF ( Nl.EQ.0 .AND. (Nh.EQ.75 .OR. Nh.EQ.77) ) THEN
+         nf1 = 0
+         CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+         IF ( Ianswer.GT.0 ) THEN
+            Ianswer = 0
          ELSE
-            IANSWER = 1
-         END IF
-         GO TO 1000
-C
-C     ...Check for 'Y' or 'y'
-C
-      ELSE IF (NL .EQ. 121 .or. NL .EQ. 89) THEN
-         NF1 = 0
-         CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-         IANSWER = 1
-         NB = NBSTART
-         LW = 5
-         ICAP = - 1
-         NF1 = 4
-         CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-C
-C     ...Check for 'N' or 'n' or Esc
-C
-      ELSE IF (NL .EQ. 27 .OR. NL .EQ. 110 .or. NL .EQ. 78) THEN
-         NF1 = 0
-         CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-         IANSWER = 0
-         NB = NBSTART + 6
-         LW = 4
-         ICAP = - 1
-         NF1 = 4
-         CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-C
-C     ...... Check for an ARROW DOWN or UP key or the ENTER key
-C
-      ELSE IF (NL .EQ. 13 .or. (NL .EQ. 0 .and. (NH .EQ. 80
-     1      .or. NH .EQ. 72))) THEN
-C
-C     ...Draw a normal video box at the current location
-C
-         ICAP = - 1
-         NF1 = 4
-         CALL BOXER2 (LR, NB, LN, LW, NF1, NL, NH, ICAP)
-C
-      END IF
-      NL = NL1
-      NH = NH1
+            Ianswer = 1
+         ENDIF
+         GOTO 100
+!
+!     ...Check for 'Y' or 'y'
+!
+      ELSEIF ( Nl.EQ.121 .OR. Nl.EQ.89 ) THEN
+         nf1 = 0
+         CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+         Ianswer = 1
+         nb = Nbstart
+         lw = 5
+         icap = -1
+         nf1 = 4
+         CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+!
+!     ...Check for 'N' or 'n' or Esc
+!
+      ELSEIF ( Nl.EQ.27 .OR. Nl.EQ.110 .OR. Nl.EQ.78 ) THEN
+         nf1 = 0
+         CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+         Ianswer = 0
+         nb = Nbstart + 6
+         lw = 4
+         icap = -1
+         nf1 = 4
+         CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+!
+!     ...... Check for an ARROW DOWN or UP key or the ENTER key
+!
+      ELSEIF ( Nl.EQ.13 .OR. (Nl.EQ.0 .AND. (Nh.EQ.80 .OR. Nh.EQ.72)) ) &
+             & THEN
+!
+!     ...Draw a normal video box at the current location
+!
+         icap = -1
+         nf1 = 4
+         CALL BOXER2(lr,nb,ln,lw,nf1,Nl,Nh,icap)
+!
+      ENDIF
+      Nl = nl1
+      Nh = nh1
+!
+      END
+!*==SCANIT.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+!      ******************** SCANIT *************************
+!
+!
+!    SUBROUTINE SCANIT IS USED TO PICK OFF
+!    1UMERIC INPUT FROM THE USER'S ASCII FILE.  DATA MAY
+!    BE INTEGER, F-FORMAT OR E-FORMAT.  10 VALUES ARE
+!    RETURNED AFTER EACH CALL.
+!
+      SUBROUTINE SCANIT(No,Value,M7,Klm,Ncol)
+      IMPLICIT NONE
+!*--SCANIT639
+!*** Start of declarations inserted by SPAG
+      REAL dkt , sgn , Value
+      INTEGER i , k , k7 , kk , kpt , M7 , n , Ncol , No
+!*** End of declarations inserted by SPAG
+      CHARACTER*1 Klm(*) , num(11) , ipoint , iplus , minus , icomp
+      CHARACTER*1 uppere , lowere
+      INTEGER esgn , exp
+      DIMENSION Value(366)
+      DATA uppere , lowere/'E' , 'e'/
+      DATA ipoint , iplus , minus/'.' , '+' , '-'/
+      DATA num/'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' ,    &
+         & '9' , '0'/
+      k7 = M7 + 1
+      DO i = 1 , 366
+         Value(i) = 0.
+      ENDDO
+      Ncol = 1
+      n = 1
+      kpt = 0
+!
+!  Exp is for e-type exponent.
+!
+      exp = 0
+ 100  IF ( Klm(Ncol).NE.minus ) THEN
+         IF ( Klm(Ncol).NE.iplus ) THEN
+            IF ( Klm(Ncol).NE.ipoint ) THEN
+               k = 0
+               icomp = num(1)
+ 110           IF ( Klm(Ncol).EQ.icomp ) THEN
+                  sgn = 1.
+                  Value(n) = k
+                  GOTO 200
+               ELSE
+                  k = k + 1
+                  icomp = num(k+1)
+                  IF ( k.LT.10 ) GOTO 110
+                  Ncol = Ncol + 1
+                  GOTO 400
+               ENDIF
+            ELSE
+               kpt = 1
+            ENDIF
+         ENDIF
+         sgn = 1.
+      ELSE
+         sgn = -1.
+      ENDIF
+      Value(n) = 0.
+ 200  Ncol = Ncol + 1
+      IF ( Ncol.GE.k7 ) GOTO 600
+!      IF (KLM (NCOL) .NE. IPOINT) GO TO 1180
+      IF ( Klm(Ncol).EQ.ipoint ) THEN
+         kpt = 1
+         GOTO 200
+!
+!     check for "E" exponent
+!
+      ELSEIF ( (Klm(Ncol).NE.uppere) .AND. (Klm(Ncol).NE.lowere) ) THEN
+         k = 0
+         icomp = num(1)
+ 250     IF ( Klm(Ncol).EQ.icomp ) THEN
+            IF ( kpt.NE.0 ) THEN
+               Value(n) = Value(n) + k*10.**(-kpt)
+               kpt = kpt + 1
+            ELSE
+               Value(n) = Value(n)*10. + k
+            ENDIF
+            GOTO 200
+         ELSE
+            k = k + 1
+            icomp = num(k+1)
+            IF ( k.GE.10 ) GOTO 600
+            GOTO 250
+         ENDIF
+      ELSE
+!
+!     found an "e" type number
+!     set sign of exponent to +1
+!
+         esgn = 1
+!
+!     dkt counts # of digits in exponent
+!
+         dkt = 0
+!
+!     move past "e"
+!
+         Ncol = Ncol + 1
+         IF ( Klm(Ncol).EQ.minus ) THEN
+            esgn = -1.
+            Ncol = Ncol + 1
+            exp = 0
+         ELSEIF ( Klm(Ncol).NE.iplus ) THEN
+            exp = 0
+         ELSE
+            esgn = 1.
+!
+!     move past sign
+!
+            Ncol = Ncol + 1
+            exp = 0
+         ENDIF
+!
+!     Check to make sure there is more data to scan.
+!
+ 300     IF ( Ncol.GE.k7 ) GOTO 600
+!
+!     kk is loop control for compares.
+!
+         kk = 0
+         icomp = num(1)
+ 350     IF ( Klm(Ncol).EQ.icomp ) THEN
+!
+!     found a digit for exponent.
+!
+            dkt = dkt + 1
+            IF ( dkt.EQ.1 ) exp = exp + kk
+            IF ( dkt.GT.1 ) exp = exp*10 + kk
+            Ncol = Ncol + 1
+            GOTO 300
+         ELSE
+            kk = kk + 1
+            icomp = num(kk+1)
+            IF ( kk.LT.10 ) GOTO 350
+!
+!     fix exponent of number
+!
+            exp = exp*esgn
+!
+!     go fix number now
+!
+            GOTO 600
+         ENDIF
+      ENDIF
+ 400  IF ( Ncol.LT.k7 ) GOTO 100
+ 500  No = n - 1
       RETURN
-C
-      END
-C *****************************************************************
-C      ******************** SCANIT *************************
-C
-C
-C    SUBROUTINE SCANIT IS USED TO PICK OFF
-C    1UMERIC INPUT FROM THE USER'S ASCII FILE.  DATA MAY
-C    BE INTEGER, F-FORMAT OR E-FORMAT.  10 VALUES ARE
-C    RETURNED AFTER EACH CALL.
-C
-      SUBROUTINE SCANIT (NO, VALUE, M7, KLM, NCOL)
-      CHARACTER*1 KLM (*), NUM (11), IPOINT, IPLUS, MINUS, ICOMP
-      character*1 uppere, lowere
-      integer esgn, exp
-      DIMENSION VALUE (366)
-      data uppere, lowere/'E', 'e'/
-      DATA IPOINT, IPLUS, MINUS/'.', '+', '-'/
-      DATA NUM/'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'/
-      K7 = M7 + 1
-      DO 1000 I = 1, 366
-         VALUE (I) = 0.
- 1000 CONTINUE
-      NCOL = 1
-      N = 1
-      KPT = 0
-c
-c  Exp is for e-type exponent.
-c
+ 600  IF ( exp.NE.0 ) Value(n) = Value(n)*(10.**exp)
+      Value(n) = Value(n)*sgn
       exp = 0
- 1010 CONTINUE
-      IF (KLM (NCOL) .NE. MINUS) GO TO 1020
- 1030 CONTINUE
-      SGN = - 1.
-      GO TO 1040
- 1020 CONTINUE
-      IF (KLM (NCOL) .NE. IPLUS) GO TO 1050
- 1060 CONTINUE
-      SGN = 1.
- 1040 CONTINUE
-      VALUE (N) = 0.
-      GO TO 1070
- 1050 CONTINUE
-      IF (KLM (NCOL) .NE. IPOINT) GO TO 1080
- 1090 CONTINUE
-      KPT = 1
-      GO TO 1060
- 1080 CONTINUE
-      K = 0
-      ICOMP = NUM (1)
- 1100 CONTINUE
-      IF (KLM (NCOL) .EQ. ICOMP) GO TO 1110
- 1120 CONTINUE
-      K = K + 1
-      ICOMP = NUM (K + 1)
-      IF (K - 10) 1100, 1130, 1130
- 1130 CONTINUE
-      NCOL = NCOL + 1
- 1140 CONTINUE
-      IF (NCOL - K7) 1010, 1150, 1150
- 1150 CONTINUE
-      NO = N - 1
-      RETURN
- 1110 CONTINUE
-      SGN = 1.
-      VALUE (N) = K
- 1070 CONTINUE
-      NCOL = NCOL + 1
-      IF (NCOL - K7) 1160, 1170, 1170
- 1160 CONTINUE
-c      IF (KLM (NCOL) .NE. IPOINT) GO TO 1180
-      IF (KLM (NCOL) .NE. IPOINT) GO TO 1180
- 1190 CONTINUE
-      KPT = 1
-      GO TO 1070
-c
-C     check for "E" exponent
-c
- 1180 CONTINUE
-      if ((klm (ncol) .ne. uppere) .and. (klm (ncol)
-     1   .ne. lowere)) go to 1200
-c
-c     found an "e" type number
-c     set sign of exponent to +1
-c
-      esgn = 1
-c
-c     dkt counts # of digits in exponent
-c
-      dkt = 0
-c
-c     move past "e"
-c
-      ncol = ncol + 1
-      IF (KLM (NCOL) .NE. MINUS) GO TO 1210
- 1220 CONTINUE
-      esgn = - 1.
-      GO TO 1230
- 1210 CONTINUE
-      IF (KLM (NCOL) .NE. IPLUS) GO TO 1240
- 1250 CONTINUE
-      esgn = 1.
- 1230 CONTINUE
-c
-c     move past sign
-c
-      ncol = ncol + 1
- 1240 CONTINUE
-      exp = 0
- 1260 CONTINUE
-c
-c     Check to make sure there is more data to scan.
-c
-      if (ncol .ge. k7) go to 1170
-c
-c     kk is loop control for compares.
-c
-      Kk = 0
-      ICOMP = NUM (1)
- 1270 CONTINUE
-      IF (KLM (NCOL) .EQ. ICOMP) GO TO 1280
- 1290 CONTINUE
-      Kk = Kk + 1
-      ICOMP = NUM (Kk + 1)
-      IF (Kk - 10) 1270, 1300, 1300
-c
-c     found a digit for exponent.
-c
- 1280 CONTINUE
-      dkt = dkt + 1
-      if (dkt .eq. 1) exp = exp + kk
-      if (dkt .gt. 1) exp = exp*10 + kk
-      ncol = ncol + 1
-      go to 1260
- 1300 continue
-c
-c     fix exponent of number
-c
-      exp = exp*esgn
-c
-c     go fix number now
-c
-      go to 1170
- 1200 CONTINUE
-      K = 0
-      ICOMP = NUM (1)
- 1310 CONTINUE
-      IF (KLM (NCOL) .EQ. ICOMP) GO TO 1320
- 1330 CONTINUE
-      K = K + 1
-      ICOMP = NUM (K + 1)
-      IF (K - 10) 1310, 1170, 1170
- 1170 CONTINUE
-      if (exp .ne. 0) value (n) = value (n)*(10.**exp)
-      VALUE (N) = VALUE (N)*SGN
-      exp = 0
-      N = N + 1
-      KPT = 0
-      IF (N .GT. 366) GO TO 1150
-      GO TO 1140
- 1320 CONTINUE
-      IF (KPT) 1340, 1350, 1340
- 1350 CONTINUE
-      VALUE (N) = VALUE (N)*10. + K
-      GO TO 1070
- 1340 CONTINUE
-      VALUE (N) = VALUE (N) + K*10.**( - KPT)
-      KPT = KPT + 1
-      GO TO 1070
+      n = n + 1
+      kpt = 0
+      IF ( n.LE.366 ) GOTO 400
+      GOTO 500
       END
-C *****************************************************************
-      SUBROUTINE TOUPPER (LETTERS, INUM_CHAR)
-      IMPLICIT INTEGER*2 (I - N)
-      CHARACTER LETTERS*80
-
-      DO 101 I = 1, INUM_CHAR
-         K = ICHAR(LETTERS(I:I))
-         IF (K.GE.97 .AND. K.LE.122) THEN
-            K = K - 32
-            LETTERS(I:I) = CHAR(K)
-         END IF
-101   CONTINUE
+!*==TOUPPER.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
+! *****************************************************************
+      SUBROUTINE TOUPPER(Letters,Inum_char)
+      IMPLICIT NONE
+!*--TOUPPER789
+!*** Start of declarations inserted by SPAG
+      INTEGER*2 i , Inum_char , k
+!*** End of declarations inserted by SPAG
+      CHARACTER Letters*80
+ 
+      DO i = 1 , Inum_char
+         k = ICHAR(Letters(i:i))
+         IF ( k.GE.97 .AND. k.LE.122 ) THEN
+            k = k - 32
+            Letters(i:i) = CHAR(k)
+         ENDIF
+      ENDDO
       END
-
