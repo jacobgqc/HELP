@@ -1,4 +1,3 @@
-!*==ACELL.spg  processed by SPAG 6.72Dc at 13:39 on 19 Oct 2018
 ! *****************************************************************
       SUBROUTINE ACELL(Nrow,Nbstart,Ns,Txt,Nl,Nh,Nwrite)
       IMPLICIT NONE
