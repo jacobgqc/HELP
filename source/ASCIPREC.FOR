@@ -1,33 +1,34 @@
 PROGRAM SCANR
-C
-C
-C********************************************************************
-C    THIS ROUTINE CONVERTS AN ASCII FILE TO A FORMATTED FILE
-C    CONTAINING DAILY VALUES.  EACH LINE OF OUTPUT CONSISTS OF
-C    THE YEAR,  TEN DATA VALUES, AND THE LINE NUMBER.
-C********************************************************************
+  !
+  !
+  !********************************************************************
+  !    THIS ROUTINE CONVERTS AN ASCII FILE TO A FORMATTED FILE
+  !    CONTAINING DAILY VALUES.  EACH LINE OF OUTPUT CONSISTS OF
+  !    THE YEAR,  TEN DATA VALUES, AND THE LINE NUMBER.
+  !********************************************************************
 
-      INTEGER*2 IFLAG, NL, NH
-      CHARACTER TXT*80, INFILE*60, CITY*20, STATE*20
-      CHARACTER CITY2*20, STATE2*20, OUTFILE*12
-      LOGICAL LVAL
-      REAL INDATA(370), RVALUE
-      DATA TXT/'
-     *                        '/
+        INTEGER*2 iflag , nl , nh
+        CHARACTER txt*80 , infile*60 , city*20 , state*20
+        CHARACTER city2*20 , state2*20 , outfile*12
+        LOGICAL lval
+        REAL indata(370) , rvalue
+        DATA txt/                                                         &
+       &'                                                                 &
+       &               '/
 
-C
-C  INITIALIZE VARIBLES
-C
-      INFILE = TXT(1:60)
-      CITY = TXT(1:20)
-      STATE = TXT(1:20)
-      CITY2 = TXT(1:20)
-      STATE2 = TXT(1:20)
-      LVAL = .FALSE.
-      ICONVERT = 0
-C
-C READ INPUT PARAMETERS - CITY, STATE, AND DATA UNITS.
-C
+       !
+       !  INITIALIZE VARIBLES
+       !
+             infile = txt(1:60)
+             city = txt(1:20)
+             state = txt(1:20)
+             city2 = txt(1:20)
+             state2 = txt(1:20)
+             lval = .FALSE.
+             iconvert = 0
+       !
+       ! READ INPUT PARAMETERS - CITY, STATE, AND DATA UNITS.
+       !
       INQUIRE(FILE='SCAN.TMP', EXIST=LVAL)
       IF (.NOT. LVAL) THEN
          CALL UTLTY (256,1,1,NL,NH,1,' ')
@@ -50,7 +51,7 @@ C
 50       CALL CELL (13,52,4, NL, NH, RVALUE, IFLAG, TXT)
          IF (RVALUE .NE. 1.0 .AND. RVALUE .NE. 2.0) GOTO 50
          IUNIT = RVALUE
-      ELSE    
+      ELSE
          OPEN (20, FILE = 'SCAN.TMP', STATUS = 'OLD')
          READ (20,100, END = 120) CITY
          READ (20,100, END = 120) STATE
@@ -93,13 +94,13 @@ C
             IF (IUNIT .NE. IUNIT2) THEN
                ICONVERT = IUNIT2
                CALL UTLTY (256,1,1,NL,NH,1,' ')
-               CALL UTLTY (8+16,10,12,NL,NH,56,' DATA WILL BE CONVERTED 
+               CALL UTLTY (8+16,10,12,NL,NH,56,' DATA WILL BE CONVERTED
      *TO UNITS PRESENT IN MASTER FILE.')
                IF(ICONVERT .EQ. 1) THEN
-                  CALL UTLTY (8+16,11,27,NL,NH,27,'(FROM METRIC TO U.S. 
+                  CALL UTLTY (8+16,11,27,NL,NH,27,'(FROM METRIC TO U.S.
      *UNITS)')
                ELSE
-                  CALL UTLTY (8+16,11,27,NL,NH,27,'(FROM U.S. TO METRIC 
+                  CALL UTLTY (8+16,11,27,NL,NH,27,'(FROM U.S. TO METRIC
      *UNITS)')
                ENDIF
                CALL UTLTY (8+16+128,14,27,NL,NH,26,'PRESS ANY KEY TO CON
@@ -163,7 +164,7 @@ C
          CALL UTLTY (8+16+128,15,27,NL,NH,26,'PRESS ANY KEY TO CONTINUE!
      *')
          GO TO 200
-      ENDIF         
+      ENDIF
 
 300   CALL UTLTY (8+256, 7, 1, NL, NH, 1, ' ')
       WRITE (6, 341)
@@ -254,7 +255,7 @@ C
 C
 C  WRITE DATA TO MASTER FILE FORMATTED
 C
-                 
+
       IF (IUNIT2 .EQ. 1) THEN
          DO 551 I=1, INUMDAYS, 10
             WRITE(10,546) IYEAR,(INDATA(J),J=I,I+9),(J/10)
